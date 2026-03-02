@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinanceFlow</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="card">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">💎 FINANCEFLOW</div>
+      <div class="balance-label">TOTAL BALANCE</div>
+      <div class="balance" id="total-balance">$0.00</div>
+    </div>
+
+    <!-- Income Expense -->
+    <div class="summary">
+      <div>
+        <div class="label">INCOME</div>
+        <div class="value" id="total-income">$0.00</div>
+      </div>
+      <div>
+        <div class="label">EXPENSE</div>
+        <div class="value" id="total-expense">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <input type="text" id="search-input" placeholder="Search transactions..." class="search"/>
+    <button id="openModal" class="add-btn">+ ADD TRANSACTION</button>
+
+    <!-- Transactions -->
+    <div class="transactions">
+      <div class="transactions-header">
+        <span>RECENT TRANSACTIONS</span>
+        <div class="filters">
+          <button class="filter active" data-filter="all">ALL</button>
+          <button class="filter" data-filter="income">INCOME</button>
+          <button class="filter" data-filter="expense">EXPENSES</button>
+        </div>
+      </div>
+
+      <ul id="transaction-list"></ul>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>NEW TRANSACTION</h3>
+      <button id="closeModal">×</button>
+    </div>
+
+    <form id="transaction-form">
+
+      <label>DESCRIPTION</label>
+      <input type="text" id="description" required>
+
+      <label>AMOUNT ($)</label>
+      <input type="number" id="amount" required>
+
+      <label>TYPE</label>
+      <div class="type-toggle">
+        <label>
+          <input type="radio" name="transaction-type" value="income" checked>
+          <span>INCOME</span>
+        </label>
+        <label>
+          <input type="radio" name="transaction-type" value="expense">
+          <span>EXPENSE</span>
+        </label>
+      </div>
+
+      <label>CATEGORY</label>
+      <select id="category">
+        <option value="salary">Salary</option>
+        <option value="food">Food</option>
+        <option value="shopping">Shopping</option>
+      </select>
+
+      <button type="submit" class="save-btn">SAVE TRANSACTION</button>
+
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
