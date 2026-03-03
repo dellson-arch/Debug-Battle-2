@@ -119,7 +119,7 @@ function renderTransactions() {
             <div class="item-amount ${itemClass}">
                 ${sign}$${Math.abs(transaction.amount)}
             </div>
-            <button class="delete-btn" onclick="removeTransaction('${transaction.id}')">
+            <button class="delete-btn" onclick="removeTransaction(${transaction.id})">
                 🗑️
             </button>
         `;
