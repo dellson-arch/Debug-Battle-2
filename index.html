@@ -1,102 +1,132 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinanceFlow</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinanceFlow | Premium Budget Tracker (BUGGY)</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <div class="logo">
+          <span class="logo-icon">💎</span>
+          <h1>FinanceFlow</h1>
+        </div>
+        <div class="balance-card">
+          <p>Total Balance</p>
+          <h2 id="total-balance">$0.00</h2>
+        </div>
+      </header>
 
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-</head>
-
-<body>
-
-<div class="app">
-
-  <div class="card">
-
-    <!-- Header -->
-    <div class="header">
-      <div class="logo">💎 FINANCEFLOW</div>
-      <div class="balance-label">TOTAL BALANCE</div>
-      <div class="balance" id="total-balance">$0.00</div>
-    </div>
-
-    <!-- Income Expense -->
-    <div class="summary">
-      <div>
-        <div class="label">INCOME</div>
-        <div class="value" id="total-income">$0.00</div>
-      </div>
-      <div>
-        <div class="label">EXPENSE</div>
-        <div class="value" id="total-expense">$0.00</div>
-      </div>
-    </div>
-
-    <!-- Controls -->
-    <input type="text" id="search-input" placeholder="Search transactions..." class="search"/>
-    <button id="openModal" class="add-btn">+ ADD TRANSACTION</button>
-
-    <!-- Transactions -->
-    <div class="transactions">
-      <div class="transactions-header">
-        <span>RECENT TRANSACTIONS</span>
-        <div class="filters">
-          <button class="filter active" data-filter="all">ALL</button>
-          <button class="filter" data-filter="income">INCOME</button>
-          <button class="filter" data-filter="expense">EXPENSES</button>
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-item income">
+          <div class="stat-icon">↑</div>
+          <div class="stat-info">
+            <span>Income</span>
+            <h3 id="total-income">$0.00</h3>
+          </div>
+        </div>
+        <div class="stat-item expense">
+          <div class="stat-icon">↓</div>
+          <div class="stat-info">
+            <span>Expense</span>
+            <h3 id="total-expense">$0.00</h3>
+          </div>
         </div>
       </div>
 
-      <ul id="transaction-list"></ul>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- Modal -->
-<div class="modal" id="modalOverlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>NEW TRANSACTION</h3>
-      <button id="closeModal">×</button>
-    </div>
-
-    <form id="transaction-form">
-
-      <label>DESCRIPTION</label>
-      <input type="text" id="description" required>
-
-      <label>AMOUNT ($)</label>
-      <input type="number" id="amount" required>
-
-      <label>TYPE</label>
-      <div class="type-toggle">
-        <label>
-          <input type="radio" name="transaction-type" value="income" checked>
-          <span>INCOME</span>
-        </label>
-        <label>
-          <input type="radio" name="transaction-type" value="expense">
-          <span>EXPENSE</span>
-        </label>
+      <!-- Controls -->
+      <div class="controls">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search transactions..." />
+        </div>
+        <button class="btn-add" id="openModal">+ Add Transaction</button>
       </div>
 
-      <label>CATEGORY</label>
-      <select id="category">
-        <option value="salary">Salary</option>
-        <option value="food">Food</option>
-        <option value="shopping">Shopping</option>
-      </select>
+      <!-- Transaction List -->
+      <div class="transaction-section">
+        <div class="section-header">
+          <h2>Recent Transactions</h2>
+          <div class="filter-btns">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="income">Income</button>
+            <button class="filter-btn" data-filter="expense">Expenses</button>
+          </div>
+        </div>
+        <ul id="transaction-list" class="transaction-list">
+          <!-- Transactions will be injected here -->
+        </ul>
+      </div>
+    </div>
 
-      <button type="submit" class="save-btn">SAVE TRANSACTION</button>
+    <!-- Modal Form -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>New Transaction</h2>
+          <button class="close-btn" id="closeModal">&times;</button>
+        </div>
+        <form id="transaction-form">
+          <div class="form-group">
+            <label for="text">Description</label>
+            <input
+              type="text"
+              id="text"
+              placeholder="e.g. Salary, Groceries"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount ($)</label>
+            <input
+              type="number"
+              id="amount"
+              step="0.01"
+              placeholder="0.00"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <div class="type-selector">
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="transaction-type"
+                  value="income"
+                  checked
+                />
+                <span class="custom-radio">Income</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="transaction-type" value="expense" />
+                <span class="custom-radio">Expense</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="salary">Salary</option>
+              <option value="food">Food</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="shopping">Shopping</option>
+              <option value="utilities">Utilities</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-submit">Save Transaction</button>
+        </form>
+      </div>
+    </div>
 
-    </form>
-  </div>
-</div>
-
-<script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

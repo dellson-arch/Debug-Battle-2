@@ -1,112 +1,155 @@
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+// Helper Selector
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => document.querySelectorAll(selector);
 
+// DOM Elements
 const balance = $('#total-balance');
 const income = $('#total-income');
 const expense = $('#total-expense');
 const list = $('#transaction-list');
 const form = $('#transaction-form');
-const description = $('#description');
-const amountInput = $('#amount');
+const text = $('#text');
+const amount = $('#amount');
 const modal = $('#modalOverlay');
 const openModalBtn = $('#openModal');
 const closeModalBtn = $('#closeModal');
 const searchInput = $('#search-input');
-const filterBtns = $$('.filter');
+const filterBtns = $$('.filter-btn');
 
+const categoryIcons = {
+    salary: '💰',
+    food: '🍔',
+    entertainment: '🎬',
+    shopping: '🛍️',
+    utilities: '⚡',
+    other: '📦'
+};
+
+// Initial State
 let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 let currentFilter = 'all';
 
-function addTransaction(e){
-  e.preventDefault();
+function addTransaction(e) {
+    e.preventDefault();
 
-  const type = $('input[name="transaction-type"]:checked').value;
-  const amount = Number(amountInput.value);
+    const type = $('input[name="transaction-type"]:checked').value;
 
-  const transaction = {
-    id: Date.now(),
-    text: description.value,
-    amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
-    type
-  };
+    const category = $('#category').value;
 
-  transactions.push(transaction);
-  updateLocal();
-  init();
+   const transaction = {
+    id: Math.floor(Math.random() * 100000000),
+    text: text.value,
+    amount: type === "expense"
+        ? -Math.abs(parseFloat(amount.value))
+        : Math.abs(parseFloat(amount.value)),
+    type: type,
+    category: category,
+    date: new Date().toLocaleDateString()
+};
 
-  form.reset();
-  modal.classList.remove('active');
+    transactions.push(transaction);
+    updateLocalStorage();
+    init();
+
+    form.reset();
+    modal.classList.remove('active');
 }
 
-function updateLocal(){
-  localStorage.setItem('transactions', JSON.stringify(transactions));
+function removeTransaction(id) {
+    transactions = transactions.filter(t => t.id !== id);
+    updateLocalStorage();
+    init();
 }
 
-function removeTransaction(id){
-  transactions = transactions.filter(t => t.id !== id);
-  updateLocal();
-  init();
+function updateLocalStorage() {
+    localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-function updateValues(){
-  let total = 0, inc = 0, exp = 0;
+// Calculate Totals
+function updateValues() {
+    // const balanceText = balance.innerText;
+    // let currentBal = parseFloat(balanceText);
 
-  transactions.forEach(t => {
-    total += t.amount;
-    if(t.amount > 0) inc += t.amount;
-    else exp += t.amount;
-  });
+    let total = 0;
+    let inc = 0;
+    let exp = 0;
 
-  balance.innerText = `$${total.toFixed(2)}`;
-  income.innerText = `$${inc.toFixed(2)}`;
-  expense.innerText = `$${Math.abs(exp).toFixed(2)}`;
+    for (let i = 0; i < transactions.length; i++) {
+        const amt = parseFloat(transactions[i].amount);
+        total += amt;
+        if (amt > 0) inc += amt;
+        else exp += amt;
+    }
+
+    balance.innerText = `$${total.toFixed(2)}`;
+    income.innerText = `$${inc.toFixed(2)}`;
+    expense.innerText = `$${Math.abs(exp).toFixed(2)}`;
 }
 
-function render(){
-  list.innerHTML = '';
-  let filtered = transactions;
+// Render Transactions
+function renderTransactions() {
+    list.innerHTML = '';
 
-  if(searchInput.value){
-    filtered = filtered.filter(t =>
-      t.text.toLowerCase().includes(searchInput.value.toLowerCase())
-    );
-  }
+    let filtered = [...transactions];
 
-  if(currentFilter !== 'all'){
-    filtered = filtered.filter(t => t.type === currentFilter);
-  }
+    // Filter Search
+    const query = searchInput.value;
+    if (query) {
+        filtered = filtered.filter(t =>
+    t.text.toLowerCase().includes(query.toLowerCase())
+);
+    }
 
-  filtered.forEach(t => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <span>${t.text}</span>
-      <span class="${t.amount < 0 ? 'amount-expense' : 'amount-income'}">
-        ${t.amount < 0 ? '-' : '+'}$${Math.abs(t.amount)}
-      </span>
-    `;
-    li.onclick = () => removeTransaction(t.id);
-    list.appendChild(li);
-  });
+    if (currentFilter !== 'all') {
+        filtered = filtered.filter(t => t.type === currentFilter);
+    }
+
+    filtered.forEach(transaction => {
+        const sign = transaction.amount < 0 ? '-' : '+';
+        const itemClass = transaction.amount < 0 ? 'amount-expense' : 'amount-income';
+        const item = document.createElement('li');
+
+        item.classList.add('transaction-item');
+        item.innerHTML = `
+            <div class="item-icon">${categoryIcons[transaction.category] || '📦'}</div>
+            <div class="item-details">
+                <p>${transaction.text}</p>
+                <span>${transaction.date}</span>
+            </div>
+            <div class="item-amount ${itemClass}">
+                ${sign}$${Math.abs(transaction.amount)}
+            </div>
+            <button class="delete-btn" onclick="removeTransaction('${transaction.id}')">
+                🗑️
+            </button>
+        `;
+
+        list.appendChild(item);
+    });
 }
 
-function init(){
-  render();
-  updateValues();
+function init() {
+    renderTransactions();
+    updateValues();
 }
 
 form.addEventListener('submit', addTransaction);
 openModalBtn.addEventListener('click', () => modal.classList.add('active'));
 closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
 
-filterBtns.forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    filterBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    render();
-  });
+window.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('active');
 });
 
-searchInput.addEventListener('input', render);
+searchInput.addEventListener('input', renderTransactions);
+
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderTransactions();
+    });
+});
 
 init();
